@@ -12,7 +12,7 @@ Make sure to add `bb8` and `bb8-surrealdb` to your `Cargo.toml`, like:
 ```toml
 [dependencies]
 bb8 = "0.8"
-bb8-surrealdb = "0.1"
+bb8-surrealdb = "0.1.1"
 surrealdb = "1.0.0-beta.8"
 ```
 

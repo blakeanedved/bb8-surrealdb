@@ -1,6 +1,6 @@
 [package]
 name = "bb8-surrealdb"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "SurrealDB driver for bb8 based on the surrealdb crate"
 authors = ["Blake Nedved <blakeanedved@gmail.com>"]

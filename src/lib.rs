@@ -57,7 +57,7 @@ impl bb8::ManageConnection for SurrealdbConnectionManager {
 
     async fn is_valid(&self, conn: &mut Self::Connection) -> Result<(), Self::Error> {
         let (ds, ses) = conn;
-        ds.execute("SELECT * FROM 1", ses, None, false).await?;
+        ds.execute("SELECT * FROM 1;", ses, None, false).await?;
         Ok(())
     }
 
