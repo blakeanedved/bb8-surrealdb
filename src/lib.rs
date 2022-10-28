@@ -1,6 +1,24 @@
-use surrealdb::{Datastore, Session};
+use std::collections::BTreeMap;
+use surrealdb::{sql::Value, Datastore, Error, Response, Session};
 
-type Connection = (Datastore, Session);
+pub struct Connection {
+    ds: Datastore,
+    ses: Session,
+}
+
+impl Connection {
+    pub async fn execute(
+        &self,
+        txt: impl AsRef<str>,
+        vars: Option<BTreeMap<String, Value>>,
+        strict: bool,
+    ) -> Result<Vec<Response>, Error> {
+        Ok(self
+            .ds
+            .execute(txt.as_ref(), &self.ses, vars, strict)
+            .await?)
+    }
+}
 
 enum ConnectionType {
     Memory,
@@ -44,20 +62,19 @@ impl bb8::ManageConnection for SurrealdbConnectionManager {
     type Error = surrealdb::Error;
 
     async fn connect(&self) -> Result<Self::Connection, Self::Error> {
-        Ok((
-            match &self.connection_type {
+        Ok(Connection {
+            ds: match &self.connection_type {
                 ConnectionType::Memory => Datastore::new("memory").await?,
                 ConnectionType::File(path) => Datastore::new(path.as_ref()).await?,
                 #[cfg(feature = "tikv")]
                 ConnectionType::TiKV(uri) => Datastore::new(uri.as_ref()).await?,
             },
-            self.session.clone(),
-        ))
+            ses: self.session.clone(),
+        })
     }
 
     async fn is_valid(&self, conn: &mut Self::Connection) -> Result<(), Self::Error> {
-        let (ds, ses) = conn;
-        ds.execute("SELECT * FROM 1;", ses, None, false).await?;
+        conn.execute("SELECT * FROM 1;", None, false).await?;
         Ok(())
     }
 

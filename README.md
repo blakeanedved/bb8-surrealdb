@@ -12,7 +12,7 @@ Make sure to add `bb8` and `bb8-surrealdb` to your `Cargo.toml`, like:
 ```toml
 [dependencies]
 bb8 = "0.8"
-bb8-surrealdb = "0.1.1"
+bb8-surrealdb = "0.1.2"
 surrealdb = "1.0.0-beta.8"
 ```
 
@@ -41,9 +41,9 @@ async fn main() {
         let pool = pool.clone();
 
         handles.push(tokio::spawn(async move {
-            let (ds, ses) = pool.get().await.unwrap();
+            let conn = pool.get().await.unwrap();
 
-            ds.execute("SELECT * from user;", &ses, None, false).await.unwrap();
+            conn.execute("SELECT * from user;", None, false).await.unwrap();
         }))
     }
 
