@@ -51,7 +51,7 @@ impl SurrealdbConnectionManager {
     pub async fn tikv(uri: impl AsRef<str>, session: Session) -> Self {
         Self {
             session,
-            connection_type: ConnectionType::TiKV(format!("file://{}", uri.as_ref())),
+            connection_type: ConnectionType::TiKV(format!("tikv://{}", uri.as_ref())),
         }
     }
 }
